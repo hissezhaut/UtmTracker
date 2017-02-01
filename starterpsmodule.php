@@ -1,319 +1,240 @@
 <?php
-/**
- * Starter Module
- * 
- *  @author    PremiumPresta <office@premiumpresta.com>
- *  @copyright PremiumPresta
- *  @license   http://creativecommons.org/licenses/by/4.0/ CC BY 4.0
- */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
+if ( !defined( '_PS_VERSION_' ) ) {
+	exit;
 }
 
-class StarterPsModule extends Module
-{
+class StarterPsModule extends Module {
 
-    /** @var array Use to store the configuration from database */
-    public $config_values;
+	/** @var array Use to store the configuration from database */
+	public $config_values;
 
-    /** @var array submit values of the configuration page */
-    protected static $config_post_submit_values = array('saveConfig');
+	/** @var array submit values of the configuration page */
+	protected static $config_post_submit_values = array('saveConfig');
 
-    public function __construct()
-    {
-        $this->name = 'starterpsmodule'; // internal identifier, unique and lowercase
-        $this->tab = 'front_office_features'; // backend module coresponding category
-        $this->version = '0.0.1'; // version number for the module
-        $this->author = 'PremiumPresta'; // module author
-        $this->need_instance = 0; // load the module when displaying the "Modules" page in backend
-        $this->bootstrap = true;
+	public function __construct () {
+		$this->name = 'starterpsmodule'; // internal identifier, unique and lowercase
+		$this->tab = 'front_office_features'; // backend module coresponding category
+		$this->version = '0.0.1'; // version number for the module
+		$this->author = 'PremiumPresta'; // module author
+		$this->need_instance = 0; // load the module when displaying the "Modules" page in backend
+		$this->bootstrap = true;
 
-        parent::__construct();
+		parent::__construct();
 
-        $this->displayName = $this->l('Starter PrestaShop Module'); // public name
-        $this->description = $this->l('Starter Module for PrestaShop 1.6.x'); // public description
+		$this->displayName = $this->l( 'Starter PrestaShop Module' ); // public name
+		$this->description = $this->l( 'Starter Module for PrestaShop 1.6.x' ); // public description
 
-        $this->confirmUninstall = $this->l('Are you sure you want to uninstall?'); // confirmation message at uninstall
+		$this->confirmUninstall = $this->l( 'Are you sure you want to uninstall?' ); // confirmation message at uninstall
 
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
-    }
+		$this->ps_versions_compliancy = [ 'min' => '1.6', 'max' => _PS_VERSION_ ];
+	}
 
-    /**
-     * Install this module
-     * @return boolean
-     */
-    public function install()
-    {
-        include dirname(__FILE__) . '/sql/install.php';
+	public function install () {
+		include dirname(__FILE__) . '/sql/install.php';
 
-        return parent::install() &&
-                $this->initConfig() &&
-                $this->registerHook('actionAdminControllerSetMedia') &&
-                $this->registerHook('actionFrontControllerSetMedia') &&
-                $this->registerHook('displayHome');
-    }
+		return parent::install()
+			&& $this->initConfig() 
+			&& $this->registerHook( 'actionAdminControllerSetMedia' )
+			&& $this->registerHook( 'actionFrontControllerSetMedia' )
+			&& $this->registerHook( 'displayHome' );
+	}
 
-    /**
-     * Uninstall this module
-     * @return boolean
-     */
-    public function uninstall()
-    {
-        include dirname(__FILE__) . '/sql/uninstall.php';
+	public function uninstall () {
+		include dirname(__FILE__) . '/sql/uninstall.php';
 
-        return Configuration::deleteByName($this->name) &&
-                parent::uninstall();
-    }
+		return Configuration::deleteByName($this->name)
+			&& parent::uninstall();
+	}
 
-    /**
-     * Add the CSS & JavaScript files you want to be loaded in BO.
-     */
-    public function hookActionAdminControllerSetMedia()
-    {
-        if ($this->isConfigPage()) {
-            $this->context->controller->addJS($this->_path . 'views/js/configuration.js');
-            $this->context->controller->addCSS($this->_path . 'views/css/configuration.css');
-        }
-    }
+	public function hookActionAdminControllerSetMedia () {
+		if ( $this->isConfigPage() ) {
+			$this->context->controller->addJS( $this->_path . 'views/js/back.js' );
+			$this->context->controller->addCSS( $this->_path . 'views/css/back.css' );
+		}
+	}
 
-    /**
-     * Set the default configuration
-     * @return boolean
-     */
-    protected function initConfig()
-    {
-        $this->config_values = array(
-            'author' => 'Mark Twain',
-            'show_author' => true
-        );
+	protected function initConfig () {
+		$this->config_values = [
+			'author' => 'Mark Twain',
+			'show_author' => true
+		];
 
-        $languages = Language::getLanguages(false);
-        foreach ($languages as $lang) {
-            $this->config_values['quote'][$lang['id_lang']] = 'The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one.';
-        }
+		$languages = Language::getLanguages( false );
 
-        return $this->setConfigValues($this->config_values);
-    }
+		foreach ( $languages as $lang ) {
+			$this->config_values['quote'][$lang['id_lang']] = 'The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one.';
+		}
 
-    /**
-     * Configuration page
-     */
-    public function getContent()
-    {
-        $this->config_values = $this->getConfigValues();
+		return $this->setConfigValues( $this->config_values );
+	}
 
-        $this->context->smarty->assign(array(
-            'module' => array(
-                'class' => get_class($this),
-                'name' => $this->name,
-                'displayName' => $this->displayName,
-                'dir' => $this->_path
-            )
-        ));
+	public function getContent () {
+		$this->config_values = $this->getConfigValues();
 
-        return $this->postProcess();
-    }
+		$this->context->smarty->assign([
+			'module' => [
+				'class' => get_class($this),
+				'name' => $this->name,
+				'displayName' => $this->displayName,
+				'dir' => $this->_path
+			]
+		]);
 
-    /**
-     * Save form data.
-     */
-    protected function postProcess()
-    {
-        $output = '';
+		return $this->postProcess();
+	}
 
-        switch ($this->getPostSubmitValue()) {
-            /* save module configuration */
-            case 'saveConfig':
-                $languages = Language::getLanguages();
-                foreach ($languages as $lang) {
-                    $this->config_values['quote'][$lang['id_lang']] = Tools::getValue('quote_' . $lang['id_lang']);
-                }
+	protected function postProcess () {
+		$output = '';
 
-                $config_keys = array_keys($this->config_values);
-                unset($config_keys['quote']); // language field was set
+		switch ( $this->getPostSubmitValue() ) {
+			/* save module configuration */
+			case 'saveConfig':
+				$languages = Language::getLanguages();
 
-                foreach ($config_keys as $key) {
-                    $this->config_values[$key] = Tools::getValue($key, $this->config_values[$key]);
-                }
+				foreach ( $languages as $lang ) {
+					$this->config_values['quote'][$lang['id_lang']] = Tools::getValue( 'quote_' . $lang['id_lang'] );
+				}
 
-                if ($this->setConfigValues($this->config_values)) {
-                    $output .= $this->displayConfirmation($this->l('Settings updated'));
-                }
+				$config_keys = array_keys( $this->config_values );
+				unset( $config_keys['quote'] ); // language field was set
 
-            // it continues to default
+				foreach ( $config_keys as $key ) {
+					$this->config_values[$key] = Tools::getValue( $key, $this->config_values[$key] );
+				}
 
-            default:
-                $output .= $this->renderForm();
-                break;
-        }
+				if ( $this->setConfigValues( $this->config_values ) ) {
+					$output .= $this->displayConfirmation( $this->l('Paramêtres enrigistrés') );
+				}
+			break;
 
-        return $output;
-    }
+			default:
+				$output .= $this->renderForm();
+			break;
+		}
 
-    /**
-     * Create the structure of your form.
-     */
-    protected function getConfigForm()
-    {
-        return array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->displayName,
-                    'icon' => 'icon-cogs'
-                ),
-                'input' => array(
-                    array(
-                        'label' => $this->l('Quote'),
-                        'name' => 'quote',
-                        'type' => 'textarea',
-                        'cols' => 10,
-                        'rows' => 10,
-                        'autoload_rte' => true,
-                        'lang' => true,
-                        'required' => true
-                    ),
-                    array(
-                        'label' => $this->l('Author'),
-                        'name' => 'author',
-                        'type' => 'text',
-                        'class' => 'fixed-width-lg',
-                    ),
-                    array(
-                        'label' => $this->l('Show Author'),
-                        'name' => 'show_author',
-                        'type' => 'switch',
-                        'is_bool' => true,
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => 0,
-                                'label' => $this->l('No')
-                            )
-                        ),
-                    ),
-                ),
-                'submit' => array(
-                    'name' => 'saveConfig',
-                    'title' => $this->l('Save'),
-                    'class' => 'btn btn-success pull-right'
-                )
-            )
-        );
-    }
+		return $output;
+	}
 
-    /**
-     * Create the form that will be displayed in the configuration of your module.
-     */
-    protected function renderForm()
-    {
-        $helper = new HelperForm();
+	protected function getConfigForm () {
+		return [
+			'form' => [
+				'legend' => [
+					'title' => $this->displayName,
+					'icon' => 'icon-cogs'
+				],
+				'input' => [
+					[
+						'label' => $this->l('Quote'),
+						'name' => 'quote',
+						'type' => 'textarea',
+						'cols' => 10,
+						'rows' => 10,
+						'autoload_rte' => true,
+						'lang' => true,
+						'required' => true
+					],
+					[
+						'label' => $this->l('Author'),
+						'name' => 'author',
+						'type' => 'text',
+						'class' => 'fixed-width-lg',
+					],
+					[
+						'label' => $this->l('Show Author'),
+						'name' => 'show_author',
+						'type' => 'switch',
+						'is_bool' => true,
+						'values' => [
+							[
+								'id' => 'active_on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							],
+							[
+								'id' => 'active_off',
+								'value' => 0,
+								'label' => $this->l('No')
+							]
+						],
+					],
+				],
+				'submit' => [
+					'name' => 'saveConfig',
+					'title' => $this->l('Save'),
+					'class' => 'btn btn-success pull-right'
+				]
+			]
+		];
+	}
 
-        $helper->show_toolbar = false;
-        $helper->table = $this->name;
-        $helper->module = $this;
-        $helper->default_form_language = $this->context->language->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+	protected function renderForm () {
+		$helper = new HelperForm;
 
-        $helper->identifier = $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name . '&module_name=' . $this->name . '&tab_module=' . $this->tab;
+		$helper->show_toolbar = false;
+		$helper->table = $this->name;
+		$helper->module = $this;
+		$helper->default_form_language = $this->context->language->id;
+		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
-        $helper->tpl_vars = array(
-            'fields_value' => $this->config_values, /* Add values for your inputs */
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id,
-        );
+		$helper->identifier = $this->name;
+		$helper->token = Tools::getAdminTokenLite('AdminModules');
+		$helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name . '&module_name=' . $this->name . '&tab_module=' . $this->tab;
 
-        return $helper->generateForm(array($this->getConfigForm()));
-    }
+		$helper->tpl_vars = [
+			'fields_value' => $this->config_values, /* Add values for your inputs */
+			'languages' => $this->context->controller->getLanguages(),
+			'id_language' => $this->context->language->id,
+		];
 
-    /**
-     * Get configuration array from database
-     * @return array
-     */
-    public function getConfigValues()
-    {
-        return json_decode(Configuration::get($this->name), true);
-    }
+		return $helper->generateForm(array($this->getConfigForm()));
+	}
 
-    /**
-     * Set configuration array to database
-     * @param array $config 
-     * @param bool $merge when true, $config can be only a subset to modify or add additional fields
-     * @return array
-     */
-    public function setConfigValues($config, $merge = false)
-    {
-        if ($merge) {
-            $config = array_merge($this->getConfigValues(), $config);
-        }
+	public function getConfigValues () {
+		return json_decode( Configuration::get( $this->name ), true );
+	}
 
-        if (Configuration::updateValue($this->name, json_encode($config))) {
-            return $config;
-        }
+	public function setConfigValues ( $config, $merge = false ) {
+		if ( $merge ) {
+			$config = array_merge( $this->getConfigValues(), $config );
+		}
 
-        return false;
-    }
+		if ( Configuration::updateValue( $this->name, json_encode( $config ) ) ) {
+			return $config;
+		}
 
-    /**
-     * Get the action submited from the configuration page
-     * @return string
-     */
-    protected function getPostSubmitValue()
-    {
-        foreach (self::$config_post_submit_values as $value) {
-            if (Tools::isSubmit($value)) {
-                return $value;
-            }
-        }
+		return false;
+	}
 
-        return false;
-    }
+	protected function getPostSubmitValue () {
+		foreach ( self::$config_post_submit_values as $value ) {
+			if ( Tools::isSubmit( $value ) ) {
+				return $value;
+			}
+		}
 
-    /**
-     * Determins if on the module configuration page
-     * @return bool
-     */
-    public function isConfigPage()
-    {
-        return self::isAdminPage('modules') && Tools::getValue('configure') === $this->name;
-    }
+		return false;
+	}
 
-    /**
-     * Determines if on the specified admin page
-     * @param string $page
-     * @return bool
-     */
-    public static function isAdminPage($page)
-    {
-        return Tools::getValue('controller') === 'Admin' . ucfirst($page);
-    }
+	public function isConfigPage () {
+		return self::isAdminPage( 'modules' ) && Tools::getValue( 'configure' ) === $this->name;
+	}
 
-    /**
-     * Add the CSS & JavaScript files on FO.
-     */
-    public function hookActionFrontControllerSetMedia()
-    {
-        $this->context->controller->addJS($this->_path . '/views/js/front.js');
-        $this->context->controller->addCSS($this->_path . '/views/css/front.css');
-    }
+	public static function isAdminPage ( $page ) {
+		return Tools::getValue( 'controller' ) === 'Admin' . ucfirst( $page );
+	}
 
-    /**
-     * Homepage content hook (Technical name: displayHome)
-     */
-    public function hookDisplayHome($params)
-    {
-        !isset($params['tpl']) && $params['tpl'] = 'displayHome';
+	public function hookActionFrontControllerSetMedia () {
+		$this->context->controller->addJS( $this->_path . '/views/js/front.js' );
+		$this->context->controller->addCSS( $this->_path . '/views/css/front.css' );
+	}
 
-        $this->config_values = $this->getConfigValues();
-        $this->smarty->assign($this->config_values);
+	public function hookDisplayHome ( $params ) {
+		!isset( $params['tpl'] ) && $params['tpl'] = 'displayHome';
 
-        return $this->display(__FILE__, $params['tpl'] . '.tpl');
-    }
+		$this->config_values = $this->getConfigValues();
+		$this->smarty->assign( $this->config_values );
+
+		return $this->display( __FILE__, $params['tpl'] . '.tpl' );
+	}
 }
