@@ -233,7 +233,7 @@ class UtmTracker extends Module {
 		!isset( $params['tpl'] ) && $params['tpl'] = 'displayHome';
 
 		$this->config_values = $this->getConfigValues();
-		dd($this->config_values, true);
+		// dd($this->config_values, true);
 		$this->smarty->assign( $this->config_values );
 
 		return $this->display( __FILE__, $params['tpl'] . '.tpl' );
