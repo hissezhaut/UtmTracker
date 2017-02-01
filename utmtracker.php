@@ -13,20 +13,19 @@ class StarterPsModule extends Module {
 	protected static $config_post_submit_values = array('saveConfig');
 
 	public function __construct () {
-		dd( __DIR__, true );
-		$this->name = 'starterpsmodule'; // internal identifier, unique and lowercase
+		$this->name = 'utmtracker'; // internal identifier, unique and lowercase
 		$this->tab = 'front_office_features'; // backend module coresponding category
 		$this->version = '0.0.1'; // version number for the module
-		$this->author = 'PremiumPresta'; // module author
+		$this->author = 'hissez-haut'; // module author
 		$this->need_instance = 0; // load the module when displaying the "Modules" page in backend
 		$this->bootstrap = true;
 
 		parent::__construct();
 
-		$this->displayName = $this->l( 'Starter PrestaShop Module' ); // public name
-		$this->description = $this->l( 'Starter Module for PrestaShop 1.6.x' ); // public description
+		$this->displayName = $this->l( 'Tracker d\'UTMs' ); // public name
+		$this->description = $this->l( 'Track les UTMs' ); // public description
 
-		$this->confirmUninstall = $this->l( 'Are you sure you want to uninstall?' ); // confirmation message at uninstall
+		$this->confirmUninstall = $this->l( 'Êtes vous sur ?' ); // confirmation message at uninstall
 
 		$this->ps_versions_compliancy = [ 'min' => '1.6', 'max' => _PS_VERSION_ ];
 	}
