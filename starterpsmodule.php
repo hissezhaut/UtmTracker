@@ -13,6 +13,7 @@ class StarterPsModule extends Module {
 	protected static $config_post_submit_values = array('saveConfig');
 
 	public function __construct () {
+		dd( __DIR__, true );
 		$this->name = 'starterpsmodule'; // internal identifier, unique and lowercase
 		$this->tab = 'front_office_features'; // backend module coresponding category
 		$this->version = '0.0.1'; // version number for the module
