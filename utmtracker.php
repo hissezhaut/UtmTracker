@@ -4,7 +4,7 @@ if ( !defined( '_PS_VERSION_' ) ) {
 	exit;
 }
 
-class StarterPsModule extends Module {
+class UtmTracker extends Module {
 
 	/** @var array Use to store the configuration from database */
 	public $config_values;
