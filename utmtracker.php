@@ -229,6 +229,18 @@ class UtmTracker extends Module {
 		$this->context->controller->addCSS( $this->_path . '/views/css/front.css' );
 	}
 
+	public function hookDisplayFooter ( $params ) {
+		!isset( $params['tpl'] ) && $params['tpl'] = 'displayFooter';
+
+		$this->config_values = $this->getConfigValues();
+
+		$this->smarty->assign([
+			'ici' => 'la',
+		]);
+
+		return $this->display( __FILE__, $params['tpl'] . '.tpl' );
+	}
+
 	public function hookDisplayHome ( $params ) {
 		!isset( $params['tpl'] ) && $params['tpl'] = 'displayHome';
 
