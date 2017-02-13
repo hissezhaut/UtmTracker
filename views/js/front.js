@@ -1,9 +1,7 @@
 $(document).ready(function () {
-	console.log(window.location);	
+	var utms = utm();
 
-	// if ( utms.length ) {
-
-	// }
-
-	// Cookies.set( 'utms', utms );
+	if ( JSON.stringify( utms ) != '{"source":false,"medium":false,"campaign":false,"term":false,"content":false}' ) {
+		Cookies.set( 'utms', utms );
+	}
 });

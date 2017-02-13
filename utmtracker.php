@@ -37,7 +37,9 @@ class UtmTracker extends Module {
 			&& $this->initConfig() 
 			&& $this->registerHook( 'actionAdminControllerSetMedia' )
 			&& $this->registerHook( 'actionFrontControllerSetMedia' )
-			&& $this->registerHook( 'displayHome' );
+			&& $this->registerHook( 'displayHome' )
+			&& $this->registerHook( 'displayFooter' )
+			&& $this->registerHook( 'actionValidateOrder' );
 	}
 
 	public function uninstall () {
@@ -226,6 +228,7 @@ class UtmTracker extends Module {
 
 	public function hookActionFrontControllerSetMedia () {
 		$this->context->controller->addJS( $this->_path . '/views/js/js.cookie.js' );
+		$this->context->controller->addJS( $this->_path . '/views/js/utm.js' );
 		$this->context->controller->addJS( $this->_path . '/views/js/front.js' );
 		$this->context->controller->addCSS( $this->_path . '/views/css/front.css' );
 	}
@@ -250,5 +253,18 @@ class UtmTracker extends Module {
 		$this->smarty->assign( $this->config_values );
 
 		return $this->display( __FILE__, $params['tpl'] . '.tpl' );
+	}
+
+	public function hookActionValidateOrder ( $params ) {
+		$order_id = $params['order']->id;
+
+		$utms = json_decode( stripslashes( $_COOKIE['utms'] ), true );
+
+		$fields = [];
+		foreach ( $utms as $key => $value ) {
+			$fields["utm_{$key}"] = $value;
+		}
+
+		Db::getInstance()->update( 'orders', $fields, "id_order = {$order_id}" );
 	}
 }
