@@ -256,15 +256,17 @@ class UtmTracker extends Module {
 	}
 
 	public function hookActionValidateOrder ( $params ) {
-		$order_id = $params['order']->id;
-
 		$utms = json_decode( stripslashes( $_COOKIE['utms'] ), true );
 
-		$fields = [];
-		foreach ( $utms as $key => $value ) {
-			$fields["utm_{$key}"] = $value;
-		}
+		if ( count( $utms ) ) {
+			foreach ( $utms as $key => $value ) {
+				if ( $value ) {
+					$field = "utm_{$key}";
+					$params['order']->$field = $value;
+				}
+			}
 
-		Db::getInstance()->update( 'orders', $fields, "id_order = {$order_id}" );
+			$params['order']->save();
+		}
 	}
 }
